@@ -1,0 +1,4 @@
+main.adb:3:18: error: "Number_Of_Producers" is undefined
+main.adb:4:07: error: "P" is undefined
+main.adb:6:18: error: "Number_Of_Consumers" is undefined
+main.adb:7:07: error: "K" is undefined

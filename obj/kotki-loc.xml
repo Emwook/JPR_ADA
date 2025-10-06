@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Locations >
+  <Project>
+    <vfs_file />
+    <file_marker current="true" column=" 1" line=" 1" >
+      <vfs_project>C:\Users\weron\Desktop\proj_jp\JPR_ADA\kotki.gpr</vfs_project>
+      <vfs_file>C:\Users\weron\Desktop\proj_jp\JPR_ADA\src\main.adb</vfs_file>
+    </file_marker>
+  </Project>
+  <Project >
+    <vfs_file >C:\Users\weron\Desktop\proj_jp\JPR_ADA\kotki.gpr</vfs_file>
+    <file_marker current="true" column=" 1" line=" 1">
+      <vfs_project >C:\Users\weron\Desktop\proj_jp\JPR_ADA\kotki.gpr</vfs_project>
+      <vfs_file >C:\Users\weron\Desktop\proj_jp\JPR_ADA\src\main.adb</vfs_file>
+    </file_marker>
+  </Project>
+</Locations>

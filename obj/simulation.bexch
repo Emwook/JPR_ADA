@@ -1,0 +1,22 @@
+[GENERATED OBJECT FILE]
+b__simulation.o
+[PROJECT FILES]
+C:\Users\weron\Desktop\proj_jp\JPR_ADA\kotki.gpr
+20251006200304 d75357d7b9bfdee31997fc33c8da7d54
+[BOUND OBJECT FILES]
+C:\Users\weron\Desktop\proj_jp\JPR_ADA\obj\simulation.o
+[GENERATED SOURCE FILES]
+b__simulation.ads
+b__simulation.adb
+b__simulation.ali
+[RESULTING OPTIONS]
+-LC:\Users\weron\Desktop\proj_jp\JPR_ADA\obj\
+-LC:\Users\weron\Desktop\proj_jp\JPR_ADA\obj\
+-LC:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0/adalib/
+-static
+-static-libgcc
+C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0/adalib/libgnarl.a
+C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0/adalib/libgnat.a
+-Xlinker
+--stack=0x200000,0x1000
+-mthreads

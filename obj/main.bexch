@@ -1,0 +1,19 @@
+[GENERATED OBJECT FILE]
+b__main.o
+[PROJECT FILES]
+C:\Users\weron\Desktop\proj_jp\JPR_ADA\kotki.gpr
+20251006195910 96f3227c1c19271d310e3ef414a55173
+[BOUND OBJECT FILES]
+C:\Users\weron\Desktop\proj_jp\JPR_ADA\obj\main.o
+[GENERATED SOURCE FILES]
+b__main.ads
+b__main.adb
+b__main.ali
+[RESULTING OPTIONS]
+-LC:\Users\weron\Desktop\proj_jp\JPR_ADA\obj\
+-LC:\Users\weron\Desktop\proj_jp\JPR_ADA\obj\
+-LC:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0/adalib/
+-static
+-static-libgcc
+C:/msys64/ucrt64/lib/gcc/x86_64-w64-mingw32/13.2.0/adalib/libgnat.a
+-Wl,--stack=0x2000000
