@@ -7,20 +7,20 @@ procedure Simulation is
 
    ----GLOBAL VARIABLES---
 
-   Number_Of_Producers: constant Integer := 5;
+   Number_Of_Producers: constant Integer := 13;
    Number_Of_Assemblies: constant Integer := 3;
-   Number_Of_Consumers: constant Integer := 2;
+   Number_Of_Consumers: constant Integer := 4;
 
    subtype Producer_Type is Integer range 1 .. Number_Of_Producers;
    subtype Assembly_Type is Integer range 1 .. Number_Of_Assemblies;
    subtype Consumer_Type is Integer range 1 .. Number_Of_Consumers;
 
-   Product_Name: constant array (Producer_Type) of String(1 .. 9)
-     := ("Food     ", "Litter   ", "Scratcher", "Bowl     ", "Toy      ");
+   Product_Name: constant array (Producer_Type) of String(1 .. 15)
+     := ("Catfood","Dogfood","Leash","Collar", "Litter", "Scratcher","Bowl", 
+     "Toy","Bed","WaterFountain","HamsterWheel", "HamsterFood","HamsterCage");
 
-   Assembly_Name: constant array (Assembly_Type) of String(1 .. 5)
-     := ("Kit_A", "Kit_B", "Kit_C");
-
+   Assembly_Name: constant array (Assembly_Type) of String(1 .. 11)
+     := ("Kit_Dog", "Kit_Hamster", "Kit_Cat");
    ----TASK DECLARATIONS----
 
    task type Producer is
@@ -58,7 +58,7 @@ procedure Simulation is
          Producer_Type_Number := Product;
          Production := Production_Time;
       end Start;
-      Put_Line(ESC & "[93m" & "B: Breeder started producing item: " &
+      Put_Line(ESC & "[93m" & "B: Producer started producing item: " &
                Product_Name(Producer_Type_Number) & ESC & "[0m");
       loop
          Random_Time := Duration(Random_Production.Random(G));
@@ -87,7 +87,7 @@ procedure Simulation is
       Assembly_Type: Integer;
       Consumer_Name: constant array (1 .. Number_Of_Consumers)
         of String(1 .. 9)
-        := ("Adopter_1", "Adopter_2");
+        := ("Client_1", "Client_2", "Client_3", "Client_4");
    begin
       accept Start(Consumer_Number: in Consumer_Type;
                    Consumption_Time: in Integer) do
@@ -96,14 +96,14 @@ procedure Simulation is
          Consumer_Nb := Consumer_Number;
          Consumption := Consumption_Time;
       end Start;
-      Put_Line(ESC & "[96m" & "C: Adopter started: " &
+      Put_Line(ESC & "[96m" & "C: Client started: " &
                Consumer_Name(Consumer_Nb) & ESC & "[0m");
       loop
          delay Duration(Random_Consumption.Random(G));
          Assembly_Type := Random_Assembly.Random(GA);
          B.Deliver(Assembly_Type, Assembly_Number);
          Put_Line(ESC & "[96m" & "C: " & Consumer_Name(Consumer_Nb) &
-                  " adopts " & Assembly_Name(Assembly_Type) & " no." &
+                  " purchases " & Assembly_Name(Assembly_Type) & " no." &
                   Integer'Image(Assembly_Number) & ESC & "[0m");
       end loop;
    end Consumer;
@@ -115,9 +115,9 @@ procedure Simulation is
       Storage: Storage_type := (0, 0, 0, 0, 0);
 
       Assembly_Content: array(Assembly_Type, Producer_Type) of Integer
-        := ((2, 1, 2, 0, 2),
-            (1, 2, 0, 1, 0),
-            (3, 2, 2, 0, 1));
+        := ((0, 5, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 0),
+            (4, 0, 0, 0, 3, 1, 2, 1, 2, 1, 0, 0, 0),
+            (0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 2, 3, 1));
 
       Max_Assembly_Content: array(Producer_Type) of Integer;
       Assembly_Number: array(Assembly_Type) of Integer := (1, 1, 1);
