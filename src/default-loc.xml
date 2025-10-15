@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<Locations>
+  <Project>
+    <vfs_file>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\default.gpr</vfs_file>
+    <file_marker column=" 1" line=" 1" >
+      <vfs_project />
+      <vfs_file>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\simulation.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 37" line=" 50" >
+      <vfs_project>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\default.gpr</vfs_project>
+      <vfs_file>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\simulation.adb</vfs_file>
+    </file_marker>
+    <file_marker column=" 15" line=" 55" >
+      <vfs_project>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\default.gpr</vfs_project>
+      <vfs_file>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\simulation.adb</vfs_file>
+    </file_marker>
+    <file_marker current="true" column=" 1" line=" 1" >
+      <vfs_project>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\default.gpr</vfs_project>
+      <vfs_file>C:\Users\alicj\Desktop\JPADA\JPR_ADA\src\simulation.adb</vfs_file>
+    </file_marker>
+  </Project>
+</Locations>

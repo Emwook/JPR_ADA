@@ -11,16 +11,17 @@ procedure Simulation is
    Number_Of_Assemblies: constant Integer := 3;
    Number_Of_Consumers: constant Integer := 4;
 
+   Is_Buffer_Full: Integer := 0;
+
    subtype Producer_Type is Integer range 1 .. Number_Of_Producers;
    subtype Assembly_Type is Integer range 1 .. Number_Of_Assemblies;
    subtype Consumer_Type is Integer range 1 .. Number_Of_Consumers;
 
-   Product_Name: constant array (Producer_Type) of String(1 .. 15)
-     := ("Catfood","Dogfood","Leash","Collar", "Litter", "Scratcher","Bowl", 
-     "Toy","Bed","WaterFountain","HamsterWheel", "HamsterFood","HamsterCage");
+   Product_Name: constant array (Producer_Type) of String(1 .. 14)
+     :=("Catfood       ","Dogfood       ","Leash         ","Collar        ","Litter        ","Scratcher     ","Bowl          ","Toy           ","Bed           ","WaterFountain ","HamsterWheel  ","HamsterFood   ","HamsterCage   ");
 
-   Assembly_Name: constant array (Assembly_Type) of String(1 .. 11)
-     := ("Kit_Dog", "Kit_Hamster", "Kit_Cat");
+   Assembly_Name: constant array (Assembly_Type) of String(1 .. 7)
+     := ("Kit_Dog", "Kit_Ham", "Kit_Cat");
    ----TASK DECLARATIONS----
 
    task type Producer is
@@ -61,13 +62,15 @@ procedure Simulation is
       Put_Line(ESC & "[93m" & "B: Producer started producing item: " &
                Product_Name(Producer_Type_Number) & ESC & "[0m");
       loop
-         Random_Time := Duration(Random_Production.Random(G));
-         delay Random_Time;
-         Put_Line(ESC & "[93m" & "B: Produced " &
+         if Is_Buffer_Full = 0 then
+            Random_Time := Duration(Random_Production.Random(G));
+            delay Random_Time;
+            Put_Line(ESC & "[93m" & "B: Produced " &
                   Product_Name(Producer_Type_Number) & " no."  &
                   Integer'Image(Product_Number) & ESC & "[0m");
-         B.Take(Producer_Type_Number, Product_Number);
-         Product_Number := Product_Number + 1;
+            B.Take(Producer_Type_Number, Product_Number);
+            Product_Number := Product_Number + 1;
+         end if;
       end loop;
    end Producer;
 
@@ -86,7 +89,7 @@ procedure Simulation is
       Consumption: Integer;
       Assembly_Type: Integer;
       Consumer_Name: constant array (1 .. Number_Of_Consumers)
-        of String(1 .. 9)
+        of String(1 .. 8)
         := ("Client_1", "Client_2", "Client_3", "Client_4");
    begin
       accept Start(Consumer_Number: in Consumer_Type;
@@ -112,7 +115,7 @@ procedure Simulation is
    task body Buffer is
       Storage_Capacity: constant Integer := 30;
       type Storage_type is array (Producer_Type) of Integer;
-      Storage: Storage_type := (0, 0, 0, 0, 0);
+      Storage: Storage_type := (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
       Assembly_Content: array(Assembly_Type, Producer_Type) of Integer
         := ((0, 5, 1, 1, 0, 0, 2, 2, 1, 0, 0, 0, 0),
@@ -178,7 +181,8 @@ procedure Simulation is
             else
                Put_Line(ESC & "[91m" & "S: No space! Rejected: " &
                         Product_Name(Product) & " no." &
-                        Integer'Image(Number)& ESC & "[0m");
+                          Integer'Image(Number)& ESC & ".All producers stop producing items" & "[0m");
+               --Is_Buffer_Full:=1;--
             end if;
          end Take;
          Storage_Contents;
@@ -194,6 +198,7 @@ procedure Simulation is
                end loop;
                Number := Assembly_Number(Assembly);
                Assembly_Number(Assembly) := Assembly_Number(Assembly) + 1;
+               --Is_Buffer_Full := 0;--
             else
                Put_Line(ESC & "[91m" & "S: Missing items for " &
                         Assembly_Name(Assembly)& ESC & "[0m");
