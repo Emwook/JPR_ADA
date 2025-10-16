@@ -13,6 +13,7 @@ RV NO_EXCEPTION_HANDLERS
 RV NO_EXCEPTIONS
 RV NO_FIXED_POINT
 RV NO_IO
+RV NO_IMPLICIT_CONDITIONALS
 RV NO_RELATIVE_DELAY
 RV NO_SECONDARY_STACK
 RV NO_SELECT_STATEMENTS
@@ -26,8 +27,9 @@ RV NO_IMPLICIT_LOOPS
 RV MAX_SELECT_ALTERNATIVES=3
 RV MAX_TASK_ENTRIES=1
 RV MAX_TASKS=1+
+RV MAX_ASYNCHRONOUS_SELECT_NESTING=1+
 
-U simulation%b		simulation.adb		6e657192 NE OO SU
+U simulation%b		simulation.adb		4fd3177a NE OO SU
 W ada%s			ada.ads			ada.ali
 Z ada.calendar.delays%s	a-caldel.adb		a-caldel.ali
 W ada.characters%s	a-charac.ads		a-charac.ali
@@ -38,9 +40,7 @@ W ada.numerics.discrete_random%s
 Z ada.real_time%s	a-reatim.adb		a-reatim.ali
 Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
 W ada.text_io%s		a-textio.adb		a-textio.ali
-Z interfaces%s		interfac.ads		interfac.ali
 Z system%s		system.ads		system.ali
-Z system.img_fixed_64%s	s-imfi64.ads		s-imfi64.ali
 Z system.img_int%s	s-imgint.ads		s-imgint.ali
 Z system.parameters%s	s-parame.adb		s-parame.ali
 Z system.random_numbers%s  s-rannum.adb		s-rannum.ali
@@ -48,6 +48,7 @@ Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
 Z system.soft_links%s	s-soflin.adb		s-soflin.ali
 Z system.task_info%s	s-tasinf.adb		s-tasinf.ali
 Z system.tasking%s	s-taskin.adb		s-taskin.ali
+Z system.tasking.async_delays%s  s-taasde.adb	s-taasde.ali
 Z system.tasking.rendezvous%s  s-tasren.adb	s-tasren.ali
 Z system.tasking.stages%s  s-tassta.adb		s-tassta.ali
 
@@ -76,18 +77,15 @@ D interfac.ads		20210520051132 edec285f interfaces%s
 D i-c.ads		20210520051132 d9beded9 interfaces.c%s
 D i-cstrin.ads		20210520051132 341d0ddf interfaces.c.strings%s
 D i-cstrea.ads		20210520051132 e53d8b8e interfaces.c_streams%s
-D simulation.adb	20251016132732 091b8f99 simulation%b
+D simulation.adb	20251016190754 28ade971 simulation%b
 D system.ads		20210520051136 2ffa5114 system%s
 D s-atacco.ads		20210520051132 4c36d12f system.address_to_access_conversions%s
-D s-arit64.ads		20210520051132 5f88d2b0 system.arith_64%s
 D s-crtl.ads		20210520051132 0ebbdb71 system.crtl%s
 D s-exctab.ads		20210520051132 54135002 system.exception_table%s
 D s-ficobl.ads		20210520051132 078245e4 system.file_control_block%s
 D s-finroo.ads		20210520051132 4ff27390 system.finalization_root%s
-D s-imagef.ads		20210520051134 019cdf69 system.image_f%s
 D s-imagei.ads		20210520051134 0d3f86a7 system.image_i%s
 D s-imageu.ads		20210520051134 525c30c6 system.image_u%s
-D s-imfi64.ads		20210520051134 dbac59b3 system.img_fixed_64%s
 D s-imgint.ads		20210520051134 bdb6f5ec system.img_int%s
 D s-imguns.ads		20210520051134 0e4da2ac system.img_uns%s
 D s-multip.ads		20210520051134 38ac9f73 system.multiprocessors%s
@@ -108,6 +106,7 @@ D s-tasinf.ads		20210520051128 601f6b72 system.task_info%s
 D s-taspri.ads		20210520051128 a1350802 system.task_primitives%s
 D s-taprop.ads		20210520051128 6eefbe12 system.task_primitives.operations%s
 D s-taskin.ads		20210520051128 88fba9ad system.tasking%s
+D s-taasde.ads		20210520051128 422600df system.tasking.async_delays%s
 D s-taprob.ads		20210520051128 acd6094d system.tasking.protected_objects%s
 D s-tpoben.ads		20210520051128 60ad3dae system.tasking.protected_objects.entries%s
 D s-tasren.ads		20210520051128 a67a9949 system.tasking.rendezvous%s
@@ -123,76 +122,74 @@ G a e
 G c Z b b [simulation standard 9 11 none]
 X 1 ada.ads
 16K9*Ada 20e8 26|3r6 3r23 4r6 4r34 5r6 6r6 68r40 108r9 112r9 116r38 120r36
-. 242r40 315r34
+. 236r40 307r34
 X 4 a-charac.ads
 16K13*Characters 18e19 26|4r10 4r38
 X 5 a-chlat1.ads
 18K24*Latin_1 296e27 26|4w21 4r49
-53e4*ESC{character} 26|84r16 84r96 90r22 91r67 146r16 146r83 155r25 157r52
-. 160r25 161r69 167r28 168r55 171r28 173r79 251r19 252r66 255r22 256r48 258r22
-. 259r75 264r16 264r53 271r31 272r50 276r31 276r113 281r31 282r132 291r28
-. 292r69 300r28 300r118 324r16 324r55
+53e4*ESC{character} 26|84r16 84r96 90r22 91r67 145r16 145r83 153r25 155r52
+. 158r25 159r69 164r28 166r62 169r28 170r55 245r19 246r66 249r22 250r48 252r22
+. 253r75 258r16 258r53 265r31 266r50 269r31 269r113 274r31 275r132 284r28
+. 285r69 292r28 292r118 316r16 316r55
 X 8 a-inteio.ads
 18K13*Integer_Text_IO[20|46] 26|5w10
 X 10 a-numeri.ads
-16K13*Numerics 35e17 26|6r10 68r44 108r13 112r13 116r42 120r40 242r44 315r38
+16K13*Numerics 35e17 26|6r10 68r44 108r13 112r13 116r42 120r40 236r44 307r38
 X 11 a-nudira.ads
-44k22*Discrete_Random 81e33 26|6w19 68r53 108r22 112r22 116r51 120r49 242r53
-. 315r47
-50R9 Generator<44|65R9> 26|70r28[68] 122r29[107] 123r27[111] 124r37[116]
-. 125r36[120] 243r28[242] 317r22[315]
-52V13 Random{integer} 26|86s52[68] 134s48[120] 135s60[116] 148s44[107] 149s43[111]
-. 163s47[120] 164s58[116] 249s41[242] 326s46[315]
-61U14 Reset<44|103p14> 26|79s28[68] 139s29[107] 140s26[111] 141s24[120] 142s26[116]
-. 248s25[242] 322s22[315]
+44k22*Discrete_Random 81e33 26|6w19 68r53 108r22 112r22 116r51 120r49 236r53
+. 307r47
+50R9 Generator<41|65R9> 26|70r28[68] 122r29[107] 123r27[111] 124r37[116]
+. 125r36[116] 237r28[236] 309r22[307]
+52V13 Random{integer} 26|86s52[68] 133s58[116] 134s60[116] 147s44[107] 148s43[111]
+. 160s58[116] 243s41[236] 318s46[307]
+61U14 Reset<41|103p14> 26|79s28[68] 138s29[107] 139s26[111] 140s26[116] 141s26[116]
+. 242s25[236] 314s22[307]
 X 12 a-nudira.adb
-53V16 Random[44|86]{integer} 45|402b13[26|242]
-65V16 Random[44|86]{integer} 45|402b13[26|107]
+53V16 Random[41|86]{integer} 42|402b13[26|68]
+65V16 Random[41|86]{integer} 42|402b13[26|307]
 X 19 a-textio.ads
 58K13*Text_IO 725e16 26|3w10 3r27
-506U14*Put_Line 26|84s7 90s13 146s7 155s16 160s16 167s19 171s19 233s13 236s10
-. 251s10 255s13 258s13 264s7 271s22 276s22 281s22 291s19 300s19 324s7
+506U14*Put_Line 26|84s7 90s13 145s7 153s16 158s16 164s19 169s19 229s13 245s10
+. 249s13 252s13 258s7 265s22 269s22 274s22 284s19 292s19 316s7
 X 22 interfac.ads
-55I9*Integer_64<long_long_integer>
 79M9*Unsigned_32
 82M9*Unsigned_64
 X 26 simulation.adb
-9U11*Simulation 9b11 344l5 344t15
-13i4 Number_Of_Producers{integer} 17r48 57r20 337r18
+9U11*Simulation 9b11 336l5 336t15
+13i4 Number_Of_Producers{integer} 17r48 57r20 329r18
 14i4 Number_Of_Assemblies{integer} 18r48
-15i4 Number_Of_Consumers{integer} 19r48 58r20 130r43 340r18
-17I12 Producer_Type{integer} 23r34 34r31 47r30 77r32 186r35 189r46 193r38
-. 194r35 201r19 211r36 222r19 232r19 245r66 246r19 268r37 293r28
-18I12 Assembly_Type{integer} 26r35 49r34 112r38 189r31 195r30 203r22 220r38
-. 289r41
-19I12 Consumer_Type{integer} 40r39 126r20 137r40
-23a4 Product_Name(string) 84r59 90r54 234r24 252r21 256r24 259r24 271r71
-. 276r68 281r71
-26a4 Assembly_Name(string) 156r19 161r19 168r24 172r55 291r71 300r93
+15i4 Number_Of_Consumers{integer} 19r48 58r20 130r43 332r18
+17I12 Producer_Type{integer} 23r34 34r31 47r30 77r32 182r35 185r46 189r38
+. 190r35 197r19 207r36 218r19 228r19 239r66 240r19 262r37 286r28
+18I12 Assembly_Type{integer} 26r35 49r34 112r38 185r31 191r30 199r22 216r38
+. 282r41
+19I12 Consumer_Type{integer} 40r39 126r20 136r40
+23a4 Product_Name(string) 84r59 90r54 230r24 246r21 250r24 253r24 265r71
+. 269r68 274r71
+26a4 Assembly_Name(string) 154r19 159r19 165r61 170r24 284r71 292r93
 33T14 Producer 35l8 35e16 57r45 66b14 100l8 100t16
-34Y13 Start 34>19 34>46 77b14 83l11 83t16 338s12
+34Y13 Start 34>19 34>46 77b14 83l11 83t16 330s12
 34i19 Product{17I12} 81r34
 34i46 Production_Time{integer} 82r24
-39T14 Consumer 42l8 42e16 58r45 105b14 179l8 179t16
-40Y13 Start 40>19 41>19 137b14 145l11 145t16 341s12
-40i19 Consumer_Number{19I12} 143r25
-41i19 Consumption_Time{integer} 144r25
-45T14 Buffer 51l8 51e14 59r7 184b14 312l8 312t14
-47Y13 Take 47>18 47>45 47=65 93s15 97s15 268b20 286l17 286t21
-47i18 Product{17I12} 269r30 271r84 273r30 273r50 276r81 281r84
-47i45 Number{integer} 272r41 282r47
-47b65 Stop_Production{boolean} 270r22 277m22 277r22 280r22 283m22 283r22
-49Y13 Deliver 49>21 49<49 152s15 289b20 303l17 303t24
-49i21 Assembly{18I12} 290r31 291r85 292r57 294r66 295r66 297r45 298r35 298r64
-. 300r107
-49i49 Number{integer} 297m19 297r19 301m19 301r19
-50Y13 Pest_In_Storage 306b20 308l17 308t32 328s13
-53T14 Pest 55l8 55e12 60r8 313b14 330l8 330t12
-54Y13 Start 320b14 323l11 323t16 343s7
-57a4 P(33T14) 338r7
-58a4 K(39T14) 341r7
-59t4 B{45T14} 93r13 97r13 152r13 328r11
-60t4 PE{53T14} 343r4
+39T14 Consumer 42l8 42e16 58r45 105b14 175l8 175t16
+40Y13 Start 40>19 41>19 136b14 144l11 144t16 333s12
+40i19 Consumer_Number{19I12} 142r25
+41i19 Consumption_Time{integer} 143r25
+45T14 Buffer 51l8 51e14 59r7 180b14 304l8 304t14
+47Y13 Take 47>18 47>45 47=65 93s15 97s15 262b20 279l17 279t21
+47i18 Product{17I12} 263r30 265r84 267r30 267r50 269r81 274r84
+47i45 Number{integer} 266r41 275r47
+47b65 Stop_Production{boolean} 264r22 270m22 270r22 273r22 276m22 276r22
+49Y13 Deliver 49>21 49<49 151s15 163s21 282b20 295l17 295t24
+49i21 Assembly{18I12} 283r31 284r85 285r57 287r66 289r45 290r35 290r64 292r107
+49i49 Number{integer} 289m19 289r19 293m19 293r19
+50Y13 Pest_In_Storage 298b20 300l17 300t32 320s13
+53T14 Pest 55l8 55e12 60r8 305b14 322l8 322t12
+54Y13 Start 312b14 315l11 315t16 335s7
+57a4 P(33T14) 330r7
+58a4 K(39T14) 333r7
+59t4 B{45T14} 93r13 97r13 151r13 163r19 320r11
+60t4 PE{53T14} 335r4
 67I15 Production_Time_Range{integer} 68r69
 68K15 Random_Production[11|44] 70r10 79r10 86r34
 70r7 G{11|50R9[68]} 79r34 86r59
@@ -204,70 +201,67 @@ X 26 simulation.adb
 77i20 Product{17I12}
 77i47 Production_Time{integer}
 106I15 Consumption_Time_Range{integer} 108r38
-107K15 Random_Consumption[11|44] 122r10 139r10 148r25
-111K15 Random_Assembly[11|44] 123r11 140r10 149r27
+107K15 Random_Consumption[11|44] 122r10 138r10 147r25
+111K15 Random_Assembly[11|44] 123r11 139r10 148r27
 115I15 Retry_Interval{integer} 116r67
-116K15 Random_Interval[11|44] 124r21 135r44 142r10 164r42
+116K15 Random_Interval[11|44] 124r21 125r20 133r42 134r44 140r10 141r10 160r42
 119I15 Chance{integer} 120r65
-120K15 Random_Chance[11|44] 125r22 134r34 141r10 163r33
-122r7 G{11|50R9[107]} 139r35 148r51
-123r7 GA{11|50R9[111]} 140r32 149r50
-124r7 GRetInterval{11|50R9[116]} 135r67 142r32 164r65
-125r7 GGiveUpChance{11|50R9[120]} 134r55 141r30 163r54
-126i7 Consumer_Nb{19I12} 143m10 146r68 155r62 160r62 167r65 171r65
-127i7 Assembly_Number{integer} 152m38 154r16 157r33
-128i7 Consumption{integer} 144m10
-129i7 Assembly_Type{integer} 149m10 152r23 156r33 161r33 168r38 172r69
-130a7 Consumer_Name(string) 146r54 155r48 160r48 167r51 171r51
-134i7 Giveup_Chance{integer} 163m16 166r19
-135o7 Time_Interval{duration} 164m16 173r55 174r25
-137i20 Consumer_Number{19I12}
-138i20 Consumption_Time{integer}
-185i7 Storage_Capacity{integer}
-186A12 Storage_type(integer)<integer> 187r16
-187a7 Storage{186A12} 213r13 223r16 233r63 253r13 254m13 273m22 273r42 294m22
-. 294r36
-189a7 Assembly_Content(integer) 204r19 205r46 223r29 294r49 295r49
-193a7 Max_Storage_For_Product(integer) 213r33 234r68
-194a7 Max_Assembly_Content(integer) 202m13 204r44 205m19
-195a7 Assembly_Number(integer) 292r41 297r29 298m19 298r48
-197i7 In_Storage{integer} 236r79 274m22 274r36 295m22 295r36
-199U17 Setup_Variables 199b17 209l11 209t26 265s7
-201i14 W{17I12} 202r34 204r39 204r65 205r40 205r66
-203i17 Z{18I12} 204r36 205r63
-211V16 Can_Accept{boolean} 211b16 211>27 218l11 218t21 269s19
-211i27 Product{17I12} 213r21 213r57
-220V16 Can_Deliver{boolean} 220b16 220>28 228l11 228t22 290s19
-220i28 Assembly{18I12} 223r46
-222i14 W{17I12} 223r24 223r56
-230U17 Storage_Contents 230b17 238l11 238t27 287s13 304s13 309s13
-232i14 W{17I12} 233r71 234r37 234r92
-240U17 Product_Destruction 240b17 261l11 261t30 307s16
-241I18 Pest_Choices{integer} 242r69 244r25 245r49
-242K18 Random_Product[11|44] 243r13 248r10 249r26
-243r10 G{11|50R9[242]} 248r31 249r48
-244i10 Random_Index{241I18} 249m10 250r43
-245a10 Pest_Allowed_Products(17I12) 250r21
-246i10 Product{17I12} 250m10 252r34 253r21 254r21 256r37 259r37
-268i25 Product{17I12}
-268i52 Number{integer}
-268b72 Stop_Production{boolean}
-289i28 Assembly{18I12}
-289i56 Number{integer}
-293i23 W{17I12} 294r30 294r44 294r76 295r76
-314I15 Pest_Time_Range{integer} 315r63
-315K15 Random_Pest[11|44] 317r10 322r10 326r34
-317r7 G{11|50R9[315]} 322r28 326r53
-318o7 Random_Time{duration} 326m10 327r16
-337i8 I{integer} 338r9 338r18
-340i8 J{integer} 341r9 341r18
-X 29 s-arit64.ads
-44I12*Int64{22|55I9}
-54V13*Multiply_With_Ovflo_Check64{44I12} 55i<c,__gnat_mulv64>22
-X 44 s-rannum.ads
-77V13*Random{22|79M9} 45|224i21
-78V13*Random{22|82M9} 45|224i21
-X 50 s-stausa.ads
+120K15 Random_Chance[11|44]
+122r7 G{11|50R9[107]} 138r35 147r51
+123r7 GA{11|50R9[111]} 139r32 148r50
+124r7 GRetInterval{11|50R9[116]} 133r65 134r67 140r32 160r65
+125r7 GGiveupTime{11|50R9[116]} 141r32
+126i7 Consumer_Nb{19I12} 142m10 145r68 153r62 158r62 164r65 169r65
+127i7 Assembly_Number{integer} 151m38 152r16 155r33 163m44 166r44
+128i7 Consumption{integer} 143m10
+129i7 Assembly_Type{integer} 148m10 151r23 154r33 159r33 163r29 165r75 170r38
+130a7 Consumer_Name(string) 145r54 153r48 158r48 164r51 169r51
+133o7 Giveup_Time{duration} 162r25
+134o7 Time_Interval{duration} 160m16 168r25
+136i20 Consumer_Number{19I12}
+137i20 Consumption_Time{integer}
+181i7 Storage_Capacity{integer}
+182A12 Storage_type(integer)<integer> 183r16
+183a7 Storage{182A12} 209r13 219r16 229r63 247r13 248m13 267m22 267r42 287m22
+. 287r36
+185a7 Assembly_Content(integer) 200r19 201r46 219r29 287r49
+189a7 Max_Storage_For_Product(integer) 209r33 230r68
+190a7 Max_Assembly_Content(integer) 198m13 200r44 201m19
+191a7 Assembly_Number(integer) 285r41 289r29 290m19 290r48
+193i7 In_Storage{integer}
+195U17 Setup_Variables 195b17 205l11 205t26 259s7
+197i14 W{17I12} 198r34 200r39 200r65 201r40 201r66
+199i17 Z{18I12} 200r36 201r63
+207V16 Can_Accept{boolean} 207b16 207>27 214l11 214t21 263s19
+207i27 Product{17I12} 209r21 209r57
+216V16 Can_Deliver{boolean} 216b16 216>28 224l11 224t22 283s19
+216i28 Assembly{18I12} 219r46
+218i14 W{17I12} 219r24 219r56
+226U17 Storage_Contents 226b17 232l11 232t27 280s13 296s13 301s13
+228i14 W{17I12} 229r71 230r37 230r92
+234U17 Product_Destruction 234b17 255l11 255t30 299s16
+235I18 Pest_Choices{integer} 236r69 238r25 239r49
+236K18 Random_Product[11|44] 237r13 242r10 243r26
+237r10 G{11|50R9[236]} 242r31 243r48
+238i10 Random_Index{235I18} 243m10 244r43
+239a10 Pest_Allowed_Products(17I12) 244r21
+240i10 Product{17I12} 244m10 246r34 247r21 248r21 250r37 253r37
+262i25 Product{17I12}
+262i52 Number{integer}
+262b72 Stop_Production{boolean}
+282i28 Assembly{18I12}
+282i56 Number{integer}
+286i23 W{17I12} 287r30 287r44 287r76
+306I15 Pest_Time_Range{integer} 307r63
+307K15 Random_Pest[11|44] 309r10 314r10 318r34
+309r7 G{11|50R9[307]} 314r28 318r53
+310o7 Random_Time{duration} 318m10 319r16
+329i8 I{integer} 330r9 330r18
+332i8 J{integer} 333r9 333r18
+X 41 s-rannum.ads
+77V13*Random{22|79M9} 42|224i21
+78V13*Random{22|82M9} 42|224i21
+X 47 s-stausa.ads
 208U14*Initialize 209i<c,__gnat_stack_usage_initialize>22
 273U14*Output_Results 277i<c,__gnat_stack_usage_output_results>22
 

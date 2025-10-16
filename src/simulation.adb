@@ -10,7 +10,7 @@ procedure Simulation is
 
    ----GLOBAL VARIABLES---
 
-   Number_Of_Producers: constant Integer := 5;
+   Number_Of_Producers: constant Integer := 6;
    Number_Of_Assemblies: constant Integer := 3;
    Number_Of_Consumers: constant Integer := 2;
 
@@ -21,7 +21,7 @@ procedure Simulation is
 
    --each Producer is assigned a Product that it produces
    Product_Name: constant array (Producer_Type) of String(1 .. 11)
-     := ("Bowl       ", "Toy        ", "Bed        ", "HamsterFood", "BagOfLitter");
+     := ("Bowl       ", "Toy        ", "Bed        ", "HamsterFood", "CatFood    ","BagOfLitter");
    --Assembly is a collection of products
    Assembly_Name: constant array (Assembly_Type) of String(1 .. 10)
      := ("CatKit    ", "DogKit    ", "HamsterKit");
@@ -122,7 +122,7 @@ procedure Simulation is
       G: Random_Consumption.Generator;
       GA: Random_Assembly.Generator;
       GRetInterval: Random_Interval.Generator;
-      GGiveUpChance: Random_Chance.Generator;
+      GGiveupTime: Random_Interval.Generator;
       Consumer_Nb: Consumer_Type;
       Assembly_Number: Integer;
       Consumption: Integer;
@@ -130,16 +130,15 @@ procedure Simulation is
       Consumer_Name: constant array (1 .. Number_Of_Consumers)
         of String(1 .. 7)
         := ("Client1", "Client2");
-      
-      Giveup_Chance : Integer := Random_Chance.Random(GGiveUpChance);
+      Giveup_Time : Duration := Duration(Random_Interval.Random(GRetInterval));
       Time_Interval : Duration := Duration(Random_Interval.Random(GRetInterval));
    begin
       accept Start(Consumer_Number: in Consumer_Type;
                    Consumption_Time: in Integer) do
          Random_Consumption.Reset(G);
          Random_Assembly.Reset(GA);
-         Random_Chance.Reset(GGiveupChance);
          Random_Interval.Reset(GRetInterval);
+         Random_Interval.Reset(GGiveupTime);
          Consumer_Nb := Consumer_Number;
          Consumption := Consumption_Time;
       end Start;
@@ -150,7 +149,6 @@ procedure Simulation is
          -- take an assembly for consumption
          loop
             B.Deliver(Assembly_Type, Assembly_Number);
-
             if Assembly_Number /= 0 then
                Put_Line(ESC & "[96m" & "C: " & Consumer_Name(Consumer_Nb) & " received kit " &
                   Assembly_Name(Assembly_Type) & " number " &
@@ -159,20 +157,18 @@ procedure Simulation is
             else
                Put_Line(ESC & "[96m" & "C: " & Consumer_Name(Consumer_Nb) & "'s order of " &
                   Assembly_Name(Assembly_Type) & " was rejected." & ESC & "[0m");
-
-               Giveup_Chance := Random_Chance.Random(GGiveUpChance);
                Time_Interval := Duration(Random_Interval.Random(GRetInterval));
-
-               if Giveup_Chance >= 50 then
+               select 
+                  delay Giveup_Time;
+                  B.Deliver(Assembly_Type, Assembly_Number);
+                  Put_Line(ESC & "[96m" & "C: " & Consumer_Name(Consumer_Nb) & 
+                             " waits and tries ordering " & Assembly_Name(Assembly_Type) & " again. Kit number: "
+                           & Integer'Image(Assembly_Number)& ESC & "[0m");
+               then abort  
+                  delay Time_Interval;
                   Put_Line(ESC & "[96m" & "C: " & Consumer_Name(Consumer_Nb) & " gave up on ordering " 
                      & Assembly_Name(Assembly_Type) & ESC & "[0m");
-                  exit;
-               else
-                  Put_Line(ESC & "[96m" & "C: " & Consumer_Name(Consumer_Nb) & 
-                     " will wait and try ordering " & Assembly_Name(Assembly_Type) &
-                     " again after " & Duration'Image(Time_Interval) & "s." & ESC & "[0m");
-                  delay Time_Interval;
-               end if;
+               end select;
       end if;
    end loop;
       end loop;
@@ -182,15 +178,15 @@ procedure Simulation is
    --Buffer--
 
    task body Buffer is
-      Storage_Capacity: constant Integer := 30;
+      Storage_Capacity: constant Integer := 38;
       type Storage_type is array (Producer_Type) of Integer;
       Storage: Storage_type
-        := (0, 0, 0, 0, 0);
+        := (0, 0, 0, 0, 0, 0);
       Assembly_Content: array(Assembly_Type, Producer_Type) of Integer
-        := ((2, 1, 1, 0, 0),
-            (2, 2, 1, 0, 2),
-            (1, 0, 0, 1, 2));
-      Max_Storage_For_Product:array (Producer_Type) of Integer := (10, 6, 4, 2, 8);
+        := ((2, 1, 1, 0, 1, 0),
+            (2, 2, 1, 0, 0, 2),
+            (1, 0, 0, 1, 0, 2));
+      Max_Storage_For_Product:array (Producer_Type) of Integer := (11, 7, 5, 3, 3, 9);
       Max_Assembly_Content: array(Producer_Type) of Integer;
       Assembly_Number: array(Assembly_Type) of Integer
         := (1, 1, 1);
@@ -233,8 +229,6 @@ procedure Simulation is
             Put_Line("|   Storage contents: " & Integer'Image(Storage(W)) & " "
                      & Product_Name(W) & ", max: " & Integer'Image(Max_Storage_For_Product(W)));
          end loop;
-         Put_Line("|   Total number of products in storage: " & Integer'Image(In_Storage));
-
       end Storage_Contents;
       
       procedure Product_Destruction is
@@ -271,7 +265,6 @@ procedure Simulation is
                      Put_Line(ESC & "[91m" & "B: Accepted product " & Product_Name(Product) & " number " &
                           Integer'Image(Number)& ESC & "[0m");
                      Storage(Product) := Storage(Product) + 1;
-                     In_Storage := In_Storage + 1;
                   else
                      Put_Line(ESC & "[91m" & "B: Production of " & Product_Name(Product) & " is now resumed." & ESC & "[0m");
                      Stop_Production:=False;
@@ -292,7 +285,6 @@ procedure Simulation is
                           Integer'Image(Assembly_Number(Assembly))& ESC & "[0m");
                   for W in Producer_Type loop
                      Storage(W) := Storage(W) - Assembly_Content(Assembly, W);
-                     In_Storage := In_Storage - Assembly_Content(Assembly, W);
                   end loop;
                   Number := Assembly_Number(Assembly);
                   Assembly_Number(Assembly) := Assembly_Number(Assembly) + 1;
@@ -328,10 +320,6 @@ procedure Simulation is
           B.Pest_In_Storage;
       end loop;
    end Pest;
-
-
-
-
    ---"MAIN" FOR SIMULATION---
 begin
    for I in 1 .. Number_Of_Producers loop
